@@ -764,7 +764,22 @@ function rLaporan(){
   <div class="card" style="margin-top:14px">
     <div class="stat"><div class="lbl">Isi Laporan PDF</div></div>
     <p style="font-size:13.5px;color:var(--muted);margin-top:8px;line-height:1.7">Ringkasan saldo semua akun, total pemasukan & pengeluaran periode terpilih, rincian transaksi, rekap per kategori, serta posisi hutang & piutang berjalan — lengkap dengan kop BMAS.</p>
-  </div>`;
+  </div>
+  ${adm(`<div class="card" style="margin-top:14px">
+    <div class="stat"><div class="lbl">Backup Seluruh Data</div></div>
+    <p style="font-size:13.5px;color:var(--muted);margin-top:8px;margin-bottom:14px;line-height:1.7">Download semua data aplikasi (transaksi, akun, kategori, hutang/piutang, gaji, aset, pajak, rutin bulanan, dll) jadi satu file JSON. Simpan file ini di tempat aman secara berkala sebagai cadangan.</p>
+    <button class="btn btn-navy" onclick="downloadBackupJSON()">⬇ Download Backup (JSON)</button>
+  </div>`)}`;
+}
+function downloadBackupJSON(){
+  if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
+  const payload={exportedAt:new Date().toISOString(),app:'BMAS Keuangan',data:DB};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`backup_bmas_keuangan_${today()}.json`;a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup berhasil di-download');
 }
 function exportPDF(mode){
   let from,to,label;
