@@ -179,6 +179,7 @@ td.amt,th.amt{text-align:right}
     <button class="nav-item" data-page="hutang" onclick="go('hutang')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h11"/></svg>Hutang</button>
     <button class="nav-item" data-page="piutang" onclick="go('piutang')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/></svg>Piutang</button>
     <button class="nav-item" data-page="rutinbulanan" onclick="go('rutinbulanan')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2l4 4-4 4"/><path d="M3 12v-2a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 12v2a4 4 0 01-4 4H3"/></svg>Rutin Bulanan</button>
+    <button class="nav-item" data-page="bayarmingguan" onclick="go('bayarmingguan')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/><path d="M8 14l2.5 2.5L16 11"/></svg>Bayar Mingguan</button>
     <button class="nav-item" data-page="laporan" onclick="go('laporan')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h2"/></svg>Laporan</button>
     <button class="nav-item" data-page="pajak" onclick="go('pajak')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6M9 16h6M9 8h1"/><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/></svg>Pajak</button>
     <button class="nav-item" data-page="gaji" onclick="go('gaji')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21v-1a7 7 0 0114 0v1"/><path d="M19 8v6M16 11h6"/></svg>Gaji Karyawan</button>
@@ -215,7 +216,7 @@ const SLIP_BANNER='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABKAAAABMCAIAAAD
 const SLIP_SIGN='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKYAAACJCAIAAAApENTDAAAACXBIWXMAAAsSAAALEgHS3X78AAAFf0lEQVR42u2dWxPcIAiFEyf//y+nD53upLl6ATzA8antbHcjnwcBja77vi+obV3XZVmQn9BjK+C82RIhZ8uLnHLPgpxTOB07WwLkFDpVzpYGOSM4qpyNyNmInA0R+bqunKQzqvydOvO0vI6d/iAC8p+CiZMqZyNytjDIa6IzRnBUOVsI5DURHKM8kbYF68/nsOA0MR/5vu+D8m3678cP58S/QQm0lcET7NvvuX4456bpFaHDPxgvD3P8zC3p+o5c/3sk6p+9W0F6+0m9SdB91nEEvmMq/PXOcfg2TujvN/zM1zGzTESYLmIXZHOcKfRmd+MM8zSajz1acbzZi2+38cB9wfzEakGfHaLl5RrjzwCqpfCAkD8ZV9zi3Xm8L7SeVH4Mo94tDlKC9ZXjuXHsp3jE0usGS9w3NK5HhE8B3dENfMZ6I8BCLuSAqnwkRdbI3yam7OLNwSkSaPVBIp9jazMA8RZdsPxVN0jtXqC5HN/IlfQq3q8w1Gcir4Q9uN1dqoNh9lZYI695HenduFe11QwFkW7GEPoGIuh6I17LLzWpeeUSWf3H/FLfEGQtnrv/t1bYvnf2yc2YFfu8OvbufSz1Iq58+JeZojWeCODeNzPYEw102gTxFAS8jAZW39p47/sOuOPg05ecHvspPkiN/HoqRBPs+tysI2174rf/a/UuXVDuUwbNZiYahPayI6wpR/DLW0zlSrw1zhwYrOdIPcnESaEk0fd4OKkx/qbYqoDz/sy8+zayZV6QLVJPPBKpeWk1ZT586kWKN74g5kr8lM5MlEdB4w3uKm6Ffs1OT/94/cNEoRd8fX9O2yAlkVuuLydYti4ETEOOs2zc9Os2Xr31iFJnEXvaEzj6Ov5Z2DcTeumTuDFv/An+lLBc/4oTvRdY3giRziD7zwL+lEk9yLlvHcve9h6oZqHIgHoBlHiHET2O0VmF6qIEI9t0LtILm1CuNEnckQ/3HvDrdbMg60z83X9xO3YnbE9hncGkXhyp6tNGMdyMNvWCKfH3nwt/fq8qdR7O7XvKl0c+XU+ZD+RWCuDL3BEnO50bjA+0VcRQjt3dwrkX6sWpU219thiVHBEiJUk/ZZ9kYv4ybo10EXu3yeaOPEHqpenHoIK1bEGGFPUSW5pSqCLlio4d+22+pFFpd7rdzyty3nElnrPlusy6YwDFu2QraY29cgCFLPc6QH57voOBY/R7v1IclVse3RGVdyjHXi/f1jeeYHn3jfjiC6eG1d5fIYuXMjhTuZQnv573dfs6GSDv8Qwi766Yz/3FUUsCJQah7u/ELOOrOjl/V+OJH7ToRc1SQUb5tAX4pmbVKT8eb69zucbF1mGiEIZvASVuEb559O1hYIvXCXiz8WTtPiHUO+C8uFNVMKHfLhwMHnBOleNGYb/bNS1HeekejBS6SEfsi4DFu30DrILcctWr+EZw7DEuPkE8K8ZXSSvzK6sCyPE1RMAqKif1jMjRzPp5rxVbP3Lka85JXdexY9oUeURyLk9BPQhyNJvKvtKQJ4os7npV/+utdyCMP5iLSMLNsb3dT2hzTJSjtxWLttRA4imlB/b4qsPa/f7trL7V/HoN4O7nf/lyFyHkNmJ6/CNzXzbptu6ZNF7VxkKudLmz3rBo2p2Nf+vVNJUvqKuWTyNStkjntwywyZrVS8rb571jVHu2cQz2htD7xQwlPN6GmK4J1NhtPDzabfNJkdP6SVVuIHSugksac1ypBi6XXh1O5ZR4LuRmV5tQ4kAq16NOl57RsbOBItcQOiWOrnJZ6oza8jp2ShwauZTQKXFPKh+nHu+ig/iOfYQ6eXudy/uok7dB093gUJ9lhT8FPQvyPt9O3r6RN4En7DjIlxw7CYmcLVPEzkbkbCjtD/x86zl3+mNZAAAAAElFTkSuQmCC';
 
 const K_USER='bmasfin:user', K_USERS='bmasfin:users', K_DATA='bmasfin:data';
-let DB={accounts:[],categories:[],transactions:[],hutang:[],piutang:[],spt:[],denda:[],gaji:[],aktivaTetap:[],neracaSettings:{},flags:{},rutin:[]};
+let DB={accounts:[],categories:[],transactions:[],hutang:[],piutang:[],spt:[],denda:[],gaji:[],aktivaTetap:[],neracaSettings:{},flags:{},rutin:[],bayarMingguan:[]};
 let USERS=[], USER=null, PAGE='dashboard';
 const isAdmin=()=>USER&&USER.role==='admin';
 const adm=h=>isAdmin()?h:'';
@@ -281,7 +282,7 @@ async function initApp(){
     document.getElementById('setupForm').style.display='block';
   }
   const d=await sGet(K_DATA);
-  if(d){DB=d;if(!DB.spt)DB.spt=[];if(!DB.denda)DB.denda=[];if(!DB.gaji)DB.gaji=[];if(!DB.aktivaTetap)DB.aktivaTetap=[];if(!DB.neracaSettings)DB.neracaSettings={};if(!DB.flags)DB.flags={};if(!DB.rutin)DB.rutin=[]}
+  if(d){DB=d;if(!DB.spt)DB.spt=[];if(!DB.denda)DB.denda=[];if(!DB.gaji)DB.gaji=[];if(!DB.aktivaTetap)DB.aktivaTetap=[];if(!DB.neracaSettings)DB.neracaSettings={};if(!DB.flags)DB.flags={};if(!DB.rutin)DB.rutin=[];if(!DB.bayarMingguan)DB.bayarMingguan=[]}
   if(!DB.categories.length && !d){
     DB.categories=[
       {id:uid(),name:'Pembayaran Proyek',type:'in',subtype:'penjualan'},{id:uid(),name:'Penjualan Filter',type:'in',subtype:'penjualan'},{id:uid(),name:'Pendapatan Bunga',type:'in',subtype:'lain'},
@@ -319,7 +320,7 @@ function go(p){
 }
 function render(){
   const el=document.getElementById('pageContent');
-  const map={dashboard:rDashboard,workspace:rWorkspace,pemasukan:()=>rTrans('in'),pengeluaran:()=>rTrans('out'),kategori:rKategori,hutang:rHutang,piutang:rPiutang,rutinbulanan:rRutinBulanan,laporan:rLaporan,pajak:rPajak,gaji:rGaji,spttahunan:rSptTahunan,aktivatetap:rAktivaTetap,users:rUsers};
+  const map={dashboard:rDashboard,workspace:rWorkspace,pemasukan:()=>rTrans('in'),pengeluaran:()=>rTrans('out'),kategori:rKategori,hutang:rHutang,piutang:rPiutang,rutinbulanan:rRutinBulanan,bayarmingguan:rBayarMingguan,laporan:rLaporan,pajak:rPajak,gaji:rGaji,spttahunan:rSptTahunan,aktivatetap:rAktivaTetap,users:rUsers};
   el.innerHTML=map[PAGE]();
 }
 
@@ -537,7 +538,8 @@ function rHutang(){
       <td style="white-space:nowrap">${fmtDate(x.due)}</td>
       <td><span class="chip ${x.status==='lunas'?'chip-green':'chip-amber'}">${x.status==='lunas'?'Lunas':'Belum Lunas'}</span></td>
       <td class="amt mono"><b>${fmt(x.amount)}</b></td>
-      ${adm(`<td class="amt">
+      ${adm(`<td style="text-align:center">${x.status!=='lunas'?`<input type="checkbox" style="width:17px;height:17px" ${x.mingguan?'checked':''} onchange="toggleHutangMingguan('${x.id}')" title="Pilih untuk Bayar Mingguan">`:''}</td>
+      <td class="amt">
         <button class="icon-btn" title="${x.status==='lunas'?'Tandai belum lunas':'Tandai lunas'}" onclick="toggleDebt('hutang','${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></button>
         <button class="icon-btn" onclick="mDebt('hutang','${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.8 2.8 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button>
         <button class="icon-btn" onclick="delDebt('hutang','${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6"/></svg></button>
@@ -559,12 +561,12 @@ function rHutang(){
         <td colspan="3" style="color:var(--muted);font-size:12.5px">${belumCount>0?`${belumCount} belum lunas`:'Semua lunas'}</td>
         <td><span class="chip ${belumCount>0?'chip-amber':'chip-green'}">${belumCount>0?'Belum Lunas':'Lunas'}</span></td>
         <td class="amt mono"><b>${fmt(belumCount>0?totalBelum:totalAmt)}</b></td>
-        ${adm('<td class="amt"></td>')}
+        ${adm('<td></td><td class="amt"></td>')}
       </tr>`;
       return headerRow+(expanded?g.items.map(x=>debtRow(x,true)).join(''):'');
     }).join('');
     return `<div class="tbl-wrap"><table>
-    <thead><tr><th>Kepada</th><th>Pekerjaan</th><th>Keterangan</th><th>Jatuh Tempo</th><th>Status</th><th class="amt">Jumlah</th>${adm('<th style="width:120px"></th>')}</tr></thead>
+    <thead><tr><th>Kepada</th><th>Pekerjaan</th><th>Keterangan</th><th>Jatuh Tempo</th><th>Status</th><th class="amt">Jumlah</th>${adm('<th style="width:80px">Minggu Ini</th><th style="width:120px"></th>')}</tr></thead>
     <tbody>${rows}</tbody></table></div>`;
   };
 
@@ -683,6 +685,7 @@ async function saveDebt(kind,id){if(!isAdmin())return toast('Akses hanya lihat �
   await saveDB();closeModal();render();toast('Data tersimpan');
 }
 async function toggleDebt(kind,id){if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');const x=DB[kind].find(v=>v.id===id);x.status=x.status==='lunas'?'belum':'lunas';await saveDB();render()}
+async function toggleHutangMingguan(id){if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');const x=DB.hutang.find(v=>v.id===id);x.mingguan=!x.mingguan;await saveDB();render()}
 async function delDebt(kind,id){if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');if(!confirm('Hapus data ini?'))return;DB[kind]=DB[kind].filter(v=>v.id!==id);await saveDB();render();toast('Data dihapus')}
 
 /* ================= RUTIN BULANAN ================= */
@@ -725,7 +728,7 @@ function rRutinBulanan(){
 
   <div class="card" style="padding:0">
   ${list.length?`<div class="tbl-wrap"><table>
-    <thead><tr><th>Periode</th><th>Nama Tagihan</th><th>Keterangan</th><th>Tanggal Pembayaran</th><th>Status</th><th class="amt">Jumlah</th>${adm('<th style="width:120px"></th>')}</tr></thead>
+    <thead><tr><th>Periode</th><th>Nama Tagihan</th><th>Keterangan</th><th>Tanggal Pembayaran</th><th>Status</th><th class="amt">Jumlah</th>${adm('<th style="width:80px">Minggu Ini</th><th style="width:120px"></th>')}</tr></thead>
     <tbody>${list.map(x=>`<tr style="${x.status==='sudah'?'opacity:.55':''}">
       <td style="white-space:nowrap"><b>${fmtPeriod(x.period)}</b></td>
       <td><b>${esc(x.nama)}</b></td>
@@ -733,7 +736,8 @@ function rRutinBulanan(){
       <td style="white-space:nowrap">${x.tglBayar?fmtDate(x.tglBayar):'-'}</td>
       <td><span class="chip ${x.status==='sudah'?'chip-green':'chip-amber'}">${x.status==='sudah'?'Sudah Dibayar':'Belum Dibayar'}</span></td>
       <td class="amt mono"><b>${fmt(x.amount)}</b></td>
-      ${adm(`<td class="amt">
+      ${adm(`<td style="text-align:center">${x.status!=='sudah'?`<input type="checkbox" style="width:17px;height:17px" ${x.mingguan?'checked':''} onchange="toggleRutinMingguan('${x.id}')" title="Pilih untuk Bayar Mingguan">`:''}</td>
+      <td class="amt">
         <button class="icon-btn" title="${x.status==='sudah'?'Tandai belum dibayar':'Tandai sudah dibayar'}" onclick="toggleRutin('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></button>
         <button class="icon-btn" onclick="mRutin('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.8 2.8 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button>
         <button class="icon-btn" onclick="delRutin('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6"/></svg></button>
@@ -772,10 +776,190 @@ async function toggleRutin(id){
   if(x.status==='sudah'&&!x.tglBayar)x.tglBayar=today();
   await saveDB();render();
 }
+async function toggleRutinMingguan(id){
+  if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
+  const x=DB.rutin.find(v=>v.id===id);
+  x.mingguan=!x.mingguan;
+  await saveDB();render();
+}
 async function delRutin(id){
   if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
   if(!confirm('Hapus data rutin bulanan ini?'))return;
   DB.rutin=DB.rutin.filter(v=>v.id!==id);await saveDB();render();toast('Data dihapus');
+}
+
+/* ================= BAYAR MINGGUAN ================= */
+function nearestFriday(dateStr){
+  const dt=new Date((dateStr||today())+'T00:00:00');
+  const day=dt.getDay();
+  const diff=(5-day+7)%7;
+  dt.setDate(dt.getDate()+diff);
+  return dt.toISOString().slice(0,10);
+}
+function rBayarMingguan(){
+  if(!window._bayarPeriod)window._bayarPeriod=nearestFriday();
+  const periode=window._bayarPeriod;
+
+  const hutangSel=DB.hutang.filter(x=>x.mingguan&&x.status!=='lunas');
+  const rutinSel=DB.rutin.filter(x=>x.mingguan&&x.status!=='sudah');
+  const hutangProject=hutangSel.filter(x=>(x.kategori||'Project')==='Project');
+  const hutangFilter=hutangSel.filter(x=>(x.kategori||'Project')==='Filter');
+
+  const manualGroups=[];const mmap={};
+  DB.bayarMingguan.forEach(x=>{const key=x.kategori||'Lainnya';if(!mmap[key]){mmap[key]={kategori:key,items:[]};manualGroups.push(mmap[key])}mmap[key].items.push(x)});
+
+  const totalHutangProject=hutangProject.reduce((s,x)=>s+ +x.amount,0);
+  const totalHutangFilter=hutangFilter.reduce((s,x)=>s+ +x.amount,0);
+  const totalRutin=rutinSel.reduce((s,x)=>s+ +x.amount,0);
+  const totalManual=DB.bayarMingguan.reduce((s,x)=>s+ +x.amount,0);
+  const grandTotal=totalHutangProject+totalHutangFilter+totalRutin+totalManual;
+
+  const section=(title,chipClass,rowsHtml,subtotal)=>!rowsHtml?'':`<div class="card" style="padding:0;margin-bottom:16px">
+      <div style="padding:14px 16px 0"><span class="chip ${chipClass}">${esc(title)}</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Kepada / Nama</th><th>Keterangan</th><th class="amt">Jumlah</th>${adm('<th style="width:60px"></th>')}</tr></thead>
+        <tbody>${rowsHtml}</tbody>
+        <tfoot><tr><td colspan="2" style="font-weight:700">Subtotal</td><td class="amt mono" style="font-weight:700">${fmt(subtotal)}</td>${adm('<td></td>')}</tr></tfoot>
+      </table></div>
+    </div>`;
+
+  const hutangRow=(x)=>`<tr>
+    <td><b>${esc(x.party)}</b>${x.pekerjaan?` <span style="color:var(--muted);font-size:12px">(${esc(x.pekerjaan)})</span>`:''}</td>
+    <td>${esc(x.desc)||'-'}</td>
+    <td class="amt mono">${fmt(x.amount)}</td>
+    ${adm(`<td class="amt"><button class="icon-btn" title="Keluarkan dari Bayar Mingguan" onclick="toggleHutangMingguan('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></td>`)}
+  </tr>`;
+  const rutinRow=(x)=>`<tr>
+    <td><b>${esc(x.nama)}</b></td>
+    <td>${esc(x.desc)||'-'}</td>
+    <td class="amt mono">${fmt(x.amount)}</td>
+    ${adm(`<td class="amt"><button class="icon-btn" title="Keluarkan dari Bayar Mingguan" onclick="toggleRutinMingguan('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></td>`)}
+  </tr>`;
+  const manualRow=(x)=>`<tr>
+    <td><b>${esc(x.keterangan)||'-'}</b></td>
+    <td>-</td>
+    <td class="amt mono">${fmt(x.amount)}</td>
+    ${adm(`<td class="amt"><button class="icon-btn" onclick="delBayarManual('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6"/></svg></button></td>`)}
+  </tr>`;
+
+  const isEmpty=!hutangSel.length&&!rutinSel.length&&!DB.bayarMingguan.length;
+
+  return `
+  <div class="page-head"><div><h2>Bayar Mingguan</h2><div class="sub">Rekap total pembayaran rutin tiap hari Jumat</div></div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <div><label style="margin:0 0 5px">Tanggal Pembayaran (Jumat)</label><input type="date" style="width:auto" value="${periode}" onchange="window._bayarPeriod=this.value;render()"></div>
+  </div></div>
+
+  <div class="card stat hero" style="margin-bottom:16px">
+    <div class="lbl">Total Bayar Mingguan — ${fmtDate(periode)}</div>
+    <div class="val mono" style="font-size:26px">${fmt(grandTotal)}</div>
+    <div class="note">${hutangSel.length+rutinSel.length+DB.bayarMingguan.length} item dipilih</div>
+  </div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+    ${adm(`<button class="btn btn-navy" onclick="mBayarManual()">+ Tambah Item Manual</button>`)}
+    <button class="btn btn-ghost" onclick="exportBayarMingguanPDF()">⬇ Export PDF</button>
+    ${adm(grandTotal>0?`<button class="btn btn-danger-soft" onclick="finalizeBayarMingguan()">✓ Tandai Semua Sudah Dibayar</button>`:'')}
+  </div>
+
+  ${isEmpty?`<div class="empty"><b>Belum ada item dipilih</b>Centang "Minggu Ini" di menu Hutang atau Rutin Bulanan, atau tambah item manual di sini.</div>`:''}
+  ${section('Hutang — Project','chip-navy',hutangProject.map(hutangRow).join(''),totalHutangProject)}
+  ${section('Hutang — Filter','chip-navy',hutangFilter.map(hutangRow).join(''),totalHutangFilter)}
+  ${section('Rutin Bulanan','chip-green',rutinSel.map(rutinRow).join(''),totalRutin)}
+  ${manualGroups.map(g=>section(g.kategori,'chip-amber',g.items.map(manualRow).join(''),g.items.reduce((s,x)=>s+ +x.amount,0))).join('')}
+  `;
+}
+function mBayarManual(){
+  if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
+  const katList=[...new Set(['Project','Filter','Rutin Bulanan',...DB.bayarMingguan.map(x=>x.kategori)].filter(Boolean))];
+  openModal(`<h3>Tambah Item Manual</h3>
+    <label>Kategori</label><input id="fKategori" list="fKatList" placeholder="cth: Project / Filter / Operasional">
+    <datalist id="fKatList">${katList.map(k=>`<option value="${esc(k)}">`).join('')}</datalist>
+    <label>Keterangan</label><input id="fKeterangan" placeholder="cth: Bayar ongkos kirim material">
+    <label>Jumlah (Rp)</label><input id="fAmt" type="number" placeholder="0">
+    <div class="m-actions"><button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" style="margin-top:0" onclick="saveBayarManual()">Simpan</button></div>`);
+}
+async function saveBayarManual(){
+  if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
+  const kategori=fKategori.value.trim(),amt=+fAmt.value;
+  if(!kategori)return toast('Kategori wajib diisi');
+  if(!amt||amt<=0)return toast('Jumlah harus lebih dari 0');
+  DB.bayarMingguan.push({id:uid(),periode:window._bayarPeriod,kategori,keterangan:fKeterangan.value.trim(),amount:amt});
+  await saveDB();closeModal();render();toast('Item tersimpan');
+}
+async function delBayarManual(id){
+  if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
+  if(!confirm('Hapus item ini?'))return;
+  DB.bayarMingguan=DB.bayarMingguan.filter(x=>x.id!==id);await saveDB();render();toast('Item dihapus');
+}
+async function finalizeBayarMingguan(){
+  if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
+  if(!confirm('Tandai semua item di atas sebagai sudah dibayar? Hutang & rutin bulanan yang dipilih akan berubah status jadi lunas, dan item manual akan dihapus dari daftar ini.'))return;
+  const periode=window._bayarPeriod;
+  DB.hutang.filter(x=>x.mingguan&&x.status!=='lunas').forEach(x=>{x.status='lunas';x.mingguan=false});
+  DB.rutin.filter(x=>x.mingguan&&x.status!=='sudah').forEach(x=>{x.status='sudah';if(!x.tglBayar)x.tglBayar=periode;x.mingguan=false});
+  DB.bayarMingguan=[];
+  await saveDB();render();toast('Semua item ditandai sudah dibayar');
+}
+function exportBayarMingguanPDF(){
+  const periode=window._bayarPeriod||nearestFriday();
+  const hutangSel=DB.hutang.filter(x=>x.mingguan&&x.status!=='lunas');
+  const rutinSel=DB.rutin.filter(x=>x.mingguan&&x.status!=='sudah');
+  const hutangProject=hutangSel.filter(x=>(x.kategori||'Project')==='Project');
+  const hutangFilter=hutangSel.filter(x=>(x.kategori||'Project')==='Filter');
+  const manualGroups=[];const mmap={};
+  DB.bayarMingguan.forEach(x=>{const key=x.kategori||'Lainnya';if(!mmap[key]){mmap[key]={kategori:key,items:[]};manualGroups.push(mmap[key])}mmap[key].items.push(x)});
+
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  const NAVY=[14,42,71],GREEN=[30,158,106],GRAY=[107,122,136];
+  const W=doc.internal.pageSize.getWidth();
+  const rp=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+  let y=42;
+
+  doc.setFillColor(...NAVY);doc.rect(0,0,W,30,'F');
+  doc.setFillColor(...GREEN);doc.rect(0,30,W,2,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(15);
+  doc.text('PT. BERKAH MANDIRI ABADI SENTOSA',14,13);
+  doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.text('Bayar Mingguan',14,20);
+  doc.setFontSize(9);doc.text('Tanggal Pembayaran: '+fmtDate(periode),14,26);
+
+  let grandTotal=0;
+  const addSection=(title,items,rowMap)=>{
+    if(!items.length)return;
+    const subtotal=items.reduce((s,x)=>s+ +x.amount,0);
+    grandTotal+=subtotal;
+    if(y>250){doc.addPage();y=20}
+    doc.setFont('helvetica','bold');doc.setFontSize(11.5);doc.setTextColor(...NAVY);
+    doc.text(title,14,y);y+=3;
+    doc.autoTable({startY:y,theme:'striped',styles:{fontSize:9,cellPadding:2.5},headStyles:{fillColor:NAVY},
+      head:[['Kepada / Nama','Keterangan','Jumlah']],
+      body:items.map(rowMap),
+      columnStyles:{2:{halign:'right'}},
+      foot:[['','Subtotal',rp(subtotal)]],
+      footStyles:{fillColor:[240,242,244],textColor:NAVY,fontStyle:'bold',halign:'right'}});
+    y=doc.lastAutoTable.finalY+10;
+  };
+  addSection('Hutang — Project',hutangProject,x=>[x.party+(x.pekerjaan?` (${x.pekerjaan})`:''),x.desc||'-',rp(x.amount)]);
+  addSection('Hutang — Filter',hutangFilter,x=>[x.party+(x.pekerjaan?` (${x.pekerjaan})`:''),x.desc||'-',rp(x.amount)]);
+  addSection('Rutin Bulanan',rutinSel,x=>[x.nama,x.desc||'-',rp(x.amount)]);
+  manualGroups.forEach(g=>addSection(g.kategori,g.items,x=>[x.keterangan||'-','-',rp(x.amount)]));
+
+  if(y>260){doc.addPage();y=20}
+  doc.setFillColor(...NAVY);doc.rect(14,y,W-28,14,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(12);
+  doc.text('TOTAL BAYAR MINGGUAN',20,y+9);
+  doc.text(rp(grandTotal),W-20,y+9,{align:'right'});
+
+  const pages=doc.internal.getNumberOfPages();
+  for(let i=1;i<=pages;i++){
+    doc.setPage(i);doc.setFontSize(8);doc.setTextColor(...GRAY);doc.setFont('helvetica','normal');
+    doc.text(`Dibuat ${fmtDate(today())} oleh ${USER?USER.name:'-'} · BMAS Keuangan`,14,290);
+    doc.text(`Hal. ${i}/${pages}`,W-14,290,{align:'right'});
+  }
+  doc.save(`Bayar_Mingguan_${periode}.pdf`);
+  toast('PDF berhasil dibuat');
 }
 
 /* ================= LAPORAN & PDF ================= */
