@@ -519,7 +519,7 @@ async function delCat(id){if(!isAdmin())return toast('Akses hanya lihat — tida
 
 /* ================= HUTANG / PIUTANG ================= */
 const KATEGORI_PIUTANG=['Filter','Project PT. Berkah Mandiri Abadi Sentosa','CV. Rizki Powerindo'];
-const DIVISI_HUTANG=['Project','Filter'];
+const DIVISI_HUTANG=['Project','Filter','Umum'];
 function hutangGroupId(party){return 'grp_'+encodeURIComponent(party||'-').replace(/[^a-zA-Z0-9]/g,'_')}
 async function toggleHutangGroup(gid){
   if(!window._hutangExpand)window._hutangExpand={};
@@ -802,17 +802,15 @@ function rBayarMingguan(){
 
   const hutangSel=DB.hutang.filter(x=>x.mingguan&&x.status!=='lunas');
   const rutinSel=DB.rutin.filter(x=>x.mingguan&&x.status!=='sudah');
-  const hutangProject=hutangSel.filter(x=>(x.kategori||'Project')==='Project');
-  const hutangFilter=hutangSel.filter(x=>(x.kategori||'Project')==='Filter');
+  const hutangByDivisi=DIVISI_HUTANG.map(kat=>({kat,items:hutangSel.filter(x=>(x.kategori||'Project')===kat)}));
 
   const manualGroups=[];const mmap={};
   DB.bayarMingguan.forEach(x=>{const key=x.kategori||'Lainnya';if(!mmap[key]){mmap[key]={kategori:key,items:[]};manualGroups.push(mmap[key])}mmap[key].items.push(x)});
 
-  const totalHutangProject=hutangProject.reduce((s,x)=>s+ +x.amount,0);
-  const totalHutangFilter=hutangFilter.reduce((s,x)=>s+ +x.amount,0);
+  const totalHutang=hutangSel.reduce((s,x)=>s+ +x.amount,0);
   const totalRutin=rutinSel.reduce((s,x)=>s+ +x.amount,0);
   const totalManual=DB.bayarMingguan.reduce((s,x)=>s+ +x.amount,0);
-  const grandTotal=totalHutangProject+totalHutangFilter+totalRutin+totalManual;
+  const grandTotal=totalHutang+totalRutin+totalManual;
 
   const section=(title,chipClass,rowsHtml,subtotal)=>!rowsHtml?'':`<div class="card" style="padding:0;margin-bottom:16px">
       <div style="padding:14px 16px 0"><span class="chip ${chipClass}">${esc(title)}</span></div>
@@ -863,15 +861,14 @@ function rBayarMingguan(){
   </div>
 
   ${isEmpty?`<div class="empty"><b>Belum ada item dipilih</b>Centang "Minggu Ini" di menu Hutang atau Rutin Bulanan, atau tambah item manual di sini.</div>`:''}
-  ${section('Hutang — Project','chip-navy',hutangProject.map(hutangRow).join(''),totalHutangProject)}
-  ${section('Hutang — Filter','chip-navy',hutangFilter.map(hutangRow).join(''),totalHutangFilter)}
+  ${hutangByDivisi.map(d=>section(`Hutang — ${d.kat}`,'chip-navy',d.items.map(hutangRow).join(''),d.items.reduce((s,x)=>s+ +x.amount,0))).join('')}
   ${section('Rutin Bulanan','chip-green',rutinSel.map(rutinRow).join(''),totalRutin)}
   ${manualGroups.map(g=>section(g.kategori,'chip-amber',g.items.map(manualRow).join(''),g.items.reduce((s,x)=>s+ +x.amount,0))).join('')}
   `;
 }
 function mBayarManual(){
   if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
-  const katList=[...new Set(['Project','Filter','Rutin Bulanan',...DB.bayarMingguan.map(x=>x.kategori)].filter(Boolean))];
+  const katList=[...new Set(['Project','Filter','Umum','Rutin Bulanan',...DB.bayarMingguan.map(x=>x.kategori)].filter(Boolean))];
   openModal(`<h3>Tambah Item Manual</h3>
     <label>Kategori</label><input id="fKategori" list="fKatList" placeholder="cth: Project / Filter / Operasional">
     <datalist id="fKatList">${katList.map(k=>`<option value="${esc(k)}">`).join('')}</datalist>
@@ -905,8 +902,7 @@ function exportBayarMingguanPDF(){
   const periode=window._bayarPeriod||nearestFriday();
   const hutangSel=DB.hutang.filter(x=>x.mingguan&&x.status!=='lunas');
   const rutinSel=DB.rutin.filter(x=>x.mingguan&&x.status!=='sudah');
-  const hutangProject=hutangSel.filter(x=>(x.kategori||'Project')==='Project');
-  const hutangFilter=hutangSel.filter(x=>(x.kategori||'Project')==='Filter');
+  const hutangByDivisi=DIVISI_HUTANG.map(kat=>({kat,items:hutangSel.filter(x=>(x.kategori||'Project')===kat)}));
   const manualGroups=[];const mmap={};
   DB.bayarMingguan.forEach(x=>{const key=x.kategori||'Lainnya';if(!mmap[key]){mmap[key]={kategori:key,items:[]};manualGroups.push(mmap[key])}mmap[key].items.push(x)});
 
@@ -941,8 +937,7 @@ function exportBayarMingguanPDF(){
       footStyles:{fillColor:[240,242,244],textColor:NAVY,fontStyle:'bold',halign:'right'}});
     y=doc.lastAutoTable.finalY+10;
   };
-  addSection('Hutang — Project',hutangProject,x=>[x.party+(x.pekerjaan?` (${x.pekerjaan})`:''),x.desc||'-',rp(x.amount)]);
-  addSection('Hutang — Filter',hutangFilter,x=>[x.party+(x.pekerjaan?` (${x.pekerjaan})`:''),x.desc||'-',rp(x.amount)]);
+  hutangByDivisi.forEach(d=>addSection(`Hutang — ${d.kat}`,d.items,x=>[x.party+(x.pekerjaan?` (${x.pekerjaan})`:''),x.desc||'-',rp(x.amount)]));
   addSection('Rutin Bulanan',rutinSel,x=>[x.nama,x.desc||'-',rp(x.amount)]);
   manualGroups.forEach(g=>addSection(g.kategori,g.items,x=>[x.keterangan||'-','-',rp(x.amount)]));
 
