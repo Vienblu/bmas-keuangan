@@ -532,14 +532,15 @@ function rHutang(){
   const total=sumDebt(list);
 
   const debtRow=(x,nested)=>`<tr style="${x.status==='lunas'?'opacity:.55':''}${nested?';background:var(--paper)':''}">
+      <td style="white-space:nowrap">${x.tanggal?fmtDate(x.tanggal):'-'}</td>
       <td ${nested?'style="padding-left:30px;color:var(--muted);font-size:13px"':''}>${nested?'↳':`<b>${esc(x.party)}</b>`}</td>
       <td>${esc(x.pekerjaan)||'-'}</td>
       <td>${esc(x.desc)||'-'}</td>
       <td style="white-space:nowrap">${fmtDate(x.due)}</td>
       <td><span class="chip ${x.status==='lunas'?'chip-green':'chip-amber'}">${x.status==='lunas'?'Lunas':'Belum Lunas'}</span></td>
       <td class="amt mono"><b>${fmt(x.amount)}</b></td>
-      ${adm(`<td style="text-align:center">${x.status!=='lunas'?`<input type="checkbox" style="width:17px;height:17px" ${x.mingguan?'checked':''} onchange="toggleHutangMingguan('${x.id}')" title="Pilih untuk Bayar Mingguan">`:''}</td>
-      <td class="amt">
+      <td style="text-align:center">${x.status!=='lunas'?`<input type="checkbox" style="width:17px;height:17px" ${x.mingguan?'checked':''} onchange="toggleHutangMingguan('${x.id}')" title="Pilih untuk Bayar Mingguan">`:''}</td>
+      ${adm(`<td class="amt">
         <button class="icon-btn" title="${x.status==='lunas'?'Tandai belum lunas':'Tandai lunas'}" onclick="toggleDebt('hutang','${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></button>
         <button class="icon-btn" onclick="mDebt('hutang','${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.8 2.8 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button>
         <button class="icon-btn" onclick="delDebt('hutang','${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6"/></svg></button>
@@ -557,16 +558,20 @@ function rHutang(){
       const totalBelum=g.items.filter(x=>x.status!=='lunas').reduce((s,x)=>s+ +x.amount,0);
       const totalAmt=g.items.reduce((s,x)=>s+ +x.amount,0);
       const headerRow=`<tr style="cursor:pointer" onclick="toggleHutangGroup('${gid}')">
+        <td></td>
         <td><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block;vertical-align:-1px;margin-right:5px;transition:transform .15s;transform:rotate(${expanded?90:0}deg)"><path d="M9 6l6 6-6 6"/></svg><b>${esc(g.party)}</b> <span style="color:var(--muted);font-weight:400;font-size:12px">(${g.items.length} invoice)</span></td>
-        <td colspan="3" style="color:var(--muted);font-size:12.5px">${belumCount>0?`${belumCount} belum lunas`:'Semua lunas'}</td>
+        <td></td>
+        <td style="color:var(--muted);font-size:12.5px">${belumCount>0?`${belumCount} belum lunas`:'Semua lunas'}</td>
+        <td></td>
         <td><span class="chip ${belumCount>0?'chip-amber':'chip-green'}">${belumCount>0?'Belum Lunas':'Lunas'}</span></td>
         <td class="amt mono"><b>${fmt(belumCount>0?totalBelum:totalAmt)}</b></td>
-        ${adm('<td></td><td class="amt"></td>')}
+        <td></td>
+        ${adm('<td class="amt"></td>')}
       </tr>`;
       return headerRow+(expanded?g.items.map(x=>debtRow(x,true)).join(''):'');
     }).join('');
     return `<div class="tbl-wrap"><table>
-    <thead><tr><th>Kepada</th><th>Pekerjaan</th><th>Keterangan</th><th>Jatuh Tempo</th><th>Status</th><th class="amt">Jumlah</th>${adm('<th style="width:80px">Minggu Ini</th><th style="width:120px"></th>')}</tr></thead>
+    <thead><tr><th>Tanggal</th><th>Kepada</th><th>Pekerjaan</th><th>Keterangan</th><th>Jatuh Tempo</th><th>Status</th><th class="amt">Jumlah</th><th style="width:80px">Minggu Ini</th>${adm('<th style="width:120px"></th>')}</tr></thead>
     <tbody>${rows}</tbody></table></div>`;
   };
 
@@ -668,7 +673,7 @@ function mDebt(kind,id,defaultKategori){if(!isAdmin())return toast('Akses hanya 
     <datalist id="fPekerjaanList">${pekerjaanList.map(p=>`<option value="${esc(p)}">`).join('')}</datalist>`:''}
     <label>Keterangan</label><input id="fDesc" list="fDescList" value="${esc(x.desc)}" placeholder="cth: Pembelian besi hollow">
     <datalist id="fDescList">${descList.map(d=>`<option value="${esc(d)}">`).join('')}</datalist>
-    <div class="row2">${isH?'':`<div><label>Tanggal</label><input id="fTanggal" type="date" value="${x.tanggal||today()}"></div>`}
+    <div class="row2"><div><label>Tanggal</label><input id="fTanggal" type="date" value="${x.tanggal||today()}"></div>
     <div><label>Jumlah (Rp)</label><input id="fAmt" type="number" value="${x.amount}" placeholder="0"></div></div>
     <div class="row2"><div><label>Jatuh Tempo</label><input id="fDue" type="date" value="${x.due}"></div>
     <div><label>Status</label><select id="fStat"><option value="belum" ${x.status!=='lunas'?'selected':''}>Belum Lunas</option><option value="lunas" ${x.status==='lunas'?'selected':''}>Lunas</option></select></div></div>
@@ -678,14 +683,13 @@ async function saveDebt(kind,id){if(!isAdmin())return toast('Akses hanya lihat �
   const party=fParty.value.trim(),amt=+fAmt.value;
   if(!party)return toast('Nama pihak wajib diisi');
   if(!amt||amt<=0)return toast('Jumlah harus lebih dari 0');
-  const obj={party,desc:fDesc.value.trim(),amount:amt,due:fDue.value,status:fStat.value,kategori:fKategori.value};
+  const obj={party,desc:fDesc.value.trim(),amount:amt,due:fDue.value,status:fStat.value,kategori:fKategori.value,tanggal:fTanggal.value||today()};
   if(kind==='hutang'){obj.pekerjaan=fPekerjaan.value.trim()}
-  if(kind==='piutang'){obj.tanggal=fTanggal.value||today()}
   if(id){Object.assign(DB[kind].find(v=>v.id===id),obj)}else{DB[kind].push({id:uid(),...obj})}
   await saveDB();closeModal();render();toast('Data tersimpan');
 }
 async function toggleDebt(kind,id){if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');const x=DB[kind].find(v=>v.id===id);x.status=x.status==='lunas'?'belum':'lunas';await saveDB();render()}
-async function toggleHutangMingguan(id){if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');const x=DB.hutang.find(v=>v.id===id);x.mingguan=!x.mingguan;await saveDB();render()}
+async function toggleHutangMingguan(id){const x=DB.hutang.find(v=>v.id===id);x.mingguan=!x.mingguan;await saveDB();render()}
 async function delDebt(kind,id){if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');if(!confirm('Hapus data ini?'))return;DB[kind]=DB[kind].filter(v=>v.id!==id);await saveDB();render();toast('Data dihapus')}
 
 /* ================= RUTIN BULANAN ================= */
@@ -728,7 +732,7 @@ function rRutinBulanan(){
 
   <div class="card" style="padding:0">
   ${list.length?`<div class="tbl-wrap"><table>
-    <thead><tr><th>Periode</th><th>Nama Tagihan</th><th>Keterangan</th><th>Tanggal Pembayaran</th><th>Status</th><th class="amt">Jumlah</th>${adm('<th style="width:80px">Minggu Ini</th><th style="width:120px"></th>')}</tr></thead>
+    <thead><tr><th>Periode</th><th>Nama Tagihan</th><th>Keterangan</th><th>Tanggal Pembayaran</th><th>Status</th><th class="amt">Jumlah</th><th style="width:80px">Minggu Ini</th>${adm('<th style="width:120px"></th>')}</tr></thead>
     <tbody>${list.map(x=>`<tr style="${x.status==='sudah'?'opacity:.55':''}">
       <td style="white-space:nowrap"><b>${fmtPeriod(x.period)}</b></td>
       <td><b>${esc(x.nama)}</b></td>
@@ -736,8 +740,8 @@ function rRutinBulanan(){
       <td style="white-space:nowrap">${x.tglBayar?fmtDate(x.tglBayar):'-'}</td>
       <td><span class="chip ${x.status==='sudah'?'chip-green':'chip-amber'}">${x.status==='sudah'?'Sudah Dibayar':'Belum Dibayar'}</span></td>
       <td class="amt mono"><b>${fmt(x.amount)}</b></td>
-      ${adm(`<td style="text-align:center">${x.status!=='sudah'?`<input type="checkbox" style="width:17px;height:17px" ${x.mingguan?'checked':''} onchange="toggleRutinMingguan('${x.id}')" title="Pilih untuk Bayar Mingguan">`:''}</td>
-      <td class="amt">
+      <td style="text-align:center">${x.status!=='sudah'?`<input type="checkbox" style="width:17px;height:17px" ${x.mingguan?'checked':''} onchange="toggleRutinMingguan('${x.id}')" title="Pilih untuk Bayar Mingguan">`:''}</td>
+      ${adm(`<td class="amt">
         <button class="icon-btn" title="${x.status==='sudah'?'Tandai belum dibayar':'Tandai sudah dibayar'}" onclick="toggleRutin('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></button>
         <button class="icon-btn" onclick="mRutin('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.8 2.8 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button>
         <button class="icon-btn" onclick="delRutin('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6"/></svg></button>
@@ -777,7 +781,6 @@ async function toggleRutin(id){
   await saveDB();render();
 }
 async function toggleRutinMingguan(id){
-  if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
   const x=DB.rutin.find(v=>v.id===id);
   x.mingguan=!x.mingguan;
   await saveDB();render();
@@ -815,9 +818,9 @@ function rBayarMingguan(){
   const section=(title,chipClass,rowsHtml,subtotal)=>!rowsHtml?'':`<div class="card" style="padding:0;margin-bottom:16px">
       <div style="padding:14px 16px 0"><span class="chip ${chipClass}">${esc(title)}</span></div>
       <div class="tbl-wrap"><table>
-        <thead><tr><th>Kepada / Nama</th><th>Keterangan</th><th class="amt">Jumlah</th>${adm('<th style="width:60px"></th>')}</tr></thead>
+        <thead><tr><th>Kepada / Nama</th><th>Keterangan</th><th class="amt">Jumlah</th><th style="width:60px"></th></tr></thead>
         <tbody>${rowsHtml}</tbody>
-        <tfoot><tr><td colspan="2" style="font-weight:700">Subtotal</td><td class="amt mono" style="font-weight:700">${fmt(subtotal)}</td>${adm('<td></td>')}</tr></tfoot>
+        <tfoot><tr><td colspan="2" style="font-weight:700">Subtotal</td><td class="amt mono" style="font-weight:700">${fmt(subtotal)}</td><td></td></tr></tfoot>
       </table></div>
     </div>`;
 
@@ -825,19 +828,19 @@ function rBayarMingguan(){
     <td><b>${esc(x.party)}</b>${x.pekerjaan?` <span style="color:var(--muted);font-size:12px">(${esc(x.pekerjaan)})</span>`:''}</td>
     <td>${esc(x.desc)||'-'}</td>
     <td class="amt mono">${fmt(x.amount)}</td>
-    ${adm(`<td class="amt"><button class="icon-btn" title="Keluarkan dari Bayar Mingguan" onclick="toggleHutangMingguan('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></td>`)}
+    <td class="amt"><button class="icon-btn" title="Keluarkan dari Bayar Mingguan" onclick="toggleHutangMingguan('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></td>
   </tr>`;
   const rutinRow=(x)=>`<tr>
     <td><b>${esc(x.nama)}</b></td>
     <td>${esc(x.desc)||'-'}</td>
     <td class="amt mono">${fmt(x.amount)}</td>
-    ${adm(`<td class="amt"><button class="icon-btn" title="Keluarkan dari Bayar Mingguan" onclick="toggleRutinMingguan('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></td>`)}
+    <td class="amt"><button class="icon-btn" title="Keluarkan dari Bayar Mingguan" onclick="toggleRutinMingguan('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></td>
   </tr>`;
   const manualRow=(x)=>`<tr>
     <td><b>${esc(x.keterangan)||'-'}</b></td>
     <td>-</td>
     <td class="amt mono">${fmt(x.amount)}</td>
-    ${adm(`<td class="amt"><button class="icon-btn" onclick="delBayarManual('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6"/></svg></button></td>`)}
+    <td class="amt"><button class="icon-btn" onclick="delBayarManual('${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6"/></svg></button></td>
   </tr>`;
 
   const isEmpty=!hutangSel.length&&!rutinSel.length&&!DB.bayarMingguan.length;
@@ -855,9 +858,9 @@ function rBayarMingguan(){
   </div>
 
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
-    ${adm(`<button class="btn btn-navy" onclick="mBayarManual()">+ Tambah Item Manual</button>`)}
+    <button class="btn btn-navy" onclick="mBayarManual()">+ Tambah Item Manual</button>
     <button class="btn btn-ghost" onclick="exportBayarMingguanPDF()">⬇ Export PDF</button>
-    ${adm(grandTotal>0?`<button class="btn btn-danger-soft" onclick="finalizeBayarMingguan()">✓ Tandai Semua Sudah Dibayar</button>`:'')}
+    ${grandTotal>0?`<button class="btn btn-danger-soft" onclick="finalizeBayarMingguan()">✓ Tandai Semua Sudah Dibayar</button>`:''}
   </div>
 
   ${isEmpty?`<div class="empty"><b>Belum ada item dipilih</b>Centang "Minggu Ini" di menu Hutang atau Rutin Bulanan, atau tambah item manual di sini.</div>`:''}
@@ -867,7 +870,6 @@ function rBayarMingguan(){
   `;
 }
 function mBayarManual(){
-  if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
   const katList=[...new Set(['Project','Filter','Umum','Rutin Bulanan',...DB.bayarMingguan.map(x=>x.kategori)].filter(Boolean))];
   openModal(`<h3>Tambah Item Manual</h3>
     <label>Kategori</label><input id="fKategori" list="fKatList" placeholder="cth: Project / Filter / Operasional">
@@ -877,7 +879,6 @@ function mBayarManual(){
     <div class="m-actions"><button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" style="margin-top:0" onclick="saveBayarManual()">Simpan</button></div>`);
 }
 async function saveBayarManual(){
-  if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
   const kategori=fKategori.value.trim(),amt=+fAmt.value;
   if(!kategori)return toast('Kategori wajib diisi');
   if(!amt||amt<=0)return toast('Jumlah harus lebih dari 0');
@@ -885,12 +886,10 @@ async function saveBayarManual(){
   await saveDB();closeModal();render();toast('Item tersimpan');
 }
 async function delBayarManual(id){
-  if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
   if(!confirm('Hapus item ini?'))return;
   DB.bayarMingguan=DB.bayarMingguan.filter(x=>x.id!==id);await saveDB();render();toast('Item dihapus');
 }
 async function finalizeBayarMingguan(){
-  if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
   if(!confirm('Tandai semua item di atas sebagai sudah dibayar? Hutang & rutin bulanan yang dipilih akan berubah status jadi lunas, dan item manual akan dihapus dari daftar ini.'))return;
   const periode=window._bayarPeriod;
   DB.hutang.filter(x=>x.mingguan&&x.status!=='lunas').forEach(x=>{x.status='lunas';x.mingguan=false});
