@@ -532,6 +532,7 @@ function rHutang(){
 
   const debtRow=(x,nested)=>`<tr style="${x.status==='lunas'?'opacity:.55':''}${nested?';background:var(--paper)':''}">
       <td ${nested?'style="padding-left:30px;color:var(--muted);font-size:13px"':''}>${nested?'↳':`<b>${esc(x.party)}</b>`}</td>
+      <td>${esc(x.pekerjaan)||'-'}</td>
       <td>${esc(x.desc)||'-'}</td>
       <td style="white-space:nowrap">${fmtDate(x.due)}</td>
       <td><span class="chip ${x.status==='lunas'?'chip-green':'chip-amber'}">${x.status==='lunas'?'Lunas':'Belum Lunas'}</span></td>
@@ -555,7 +556,7 @@ function rHutang(){
       const totalAmt=g.items.reduce((s,x)=>s+ +x.amount,0);
       const headerRow=`<tr style="cursor:pointer" onclick="toggleHutangGroup('${gid}')">
         <td><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block;vertical-align:-1px;margin-right:5px;transition:transform .15s;transform:rotate(${expanded?90:0}deg)"><path d="M9 6l6 6-6 6"/></svg><b>${esc(g.party)}</b> <span style="color:var(--muted);font-weight:400;font-size:12px">(${g.items.length} invoice)</span></td>
-        <td colspan="2" style="color:var(--muted);font-size:12.5px">${belumCount>0?`${belumCount} belum lunas`:'Semua lunas'}</td>
+        <td colspan="3" style="color:var(--muted);font-size:12.5px">${belumCount>0?`${belumCount} belum lunas`:'Semua lunas'}</td>
         <td><span class="chip ${belumCount>0?'chip-amber':'chip-green'}">${belumCount>0?'Belum Lunas':'Lunas'}</span></td>
         <td class="amt mono"><b>${fmt(belumCount>0?totalBelum:totalAmt)}</b></td>
         ${adm('<td class="amt"></td>')}
@@ -563,7 +564,7 @@ function rHutang(){
       return headerRow+(expanded?g.items.map(x=>debtRow(x,true)).join(''):'');
     }).join('');
     return `<div class="tbl-wrap"><table>
-    <thead><tr><th>Kepada</th><th>Keterangan</th><th>Jatuh Tempo</th><th>Status</th><th class="amt">Jumlah</th>${adm('<th style="width:120px"></th>')}</tr></thead>
+    <thead><tr><th>Kepada</th><th>Pekerjaan</th><th>Keterangan</th><th>Jatuh Tempo</th><th>Status</th><th class="amt">Jumlah</th>${adm('<th style="width:120px"></th>')}</tr></thead>
     <tbody>${rows}</tbody></table></div>`;
   };
 
@@ -653,11 +654,18 @@ function rPiutang(){
 function mDebt(kind,id,defaultKategori){if(!isAdmin())return toast('Akses hanya lihat — tidak bisa mengubah data');
   const isH=kind==='hutang';
   const katOpts=isH?DIVISI_HUTANG:KATEGORI_PIUTANG;
-  const x=DB[kind].find(v=>v.id===id)||{party:'',desc:'',due:'',amount:'',status:'belum',kategori:defaultKategori||katOpts[0],tanggal:today()};
+  const x=DB[kind].find(v=>v.id===id)||{party:'',desc:'',pekerjaan:'',due:'',amount:'',status:'belum',kategori:defaultKategori||katOpts[0],tanggal:today()};
+  const partyList=[...new Set(DB[kind].map(v=>v.party).filter(Boolean))];
+  const descList=[...new Set(DB[kind].map(v=>v.desc).filter(Boolean))];
+  const pekerjaanList=[...new Set(DB.hutang.map(v=>v.pekerjaan).filter(Boolean))];
   openModal(`<h3>${id?'Edit':'Tambah'} ${isH?'Hutang':'Piutang'}</h3>
-    <label>${isH?'Kepada (Vendor/Pihak)':'Dari (Customer/Pihak)'}</label><input id="fParty" value="${esc(x.party)}" placeholder="${isH?'cth: Toko Besi Jaya':'cth: RS Pratiwi'}">
+    <label>${isH?'Kepada (Vendor/Pihak)':'Dari (Customer/Pihak)'}</label><input id="fParty" list="fPartyList" value="${esc(x.party)}" placeholder="${isH?'cth: Toko Besi Jaya':'cth: RS Pratiwi'}">
+    <datalist id="fPartyList">${partyList.map(p=>`<option value="${esc(p)}">`).join('')}</datalist>
     <label>Kategori</label><select id="fKategori">${katOpts.map(k=>`<option value="${k}" ${x.kategori===k?'selected':''}>${k}</option>`).join('')}</select>
-    <label>Keterangan</label><input id="fDesc" value="${esc(x.desc)}" placeholder="cth: Pembelian besi hollow">
+    ${isH?`<label>Pekerjaan</label><input id="fPekerjaan" list="fPekerjaanList" value="${esc(x.pekerjaan)}" placeholder="cth: Renovasi Gudang">
+    <datalist id="fPekerjaanList">${pekerjaanList.map(p=>`<option value="${esc(p)}">`).join('')}</datalist>`:''}
+    <label>Keterangan</label><input id="fDesc" list="fDescList" value="${esc(x.desc)}" placeholder="cth: Pembelian besi hollow">
+    <datalist id="fDescList">${descList.map(d=>`<option value="${esc(d)}">`).join('')}</datalist>
     <div class="row2">${isH?'':`<div><label>Tanggal</label><input id="fTanggal" type="date" value="${x.tanggal||today()}"></div>`}
     <div><label>Jumlah (Rp)</label><input id="fAmt" type="number" value="${x.amount}" placeholder="0"></div></div>
     <div class="row2"><div><label>Jatuh Tempo</label><input id="fDue" type="date" value="${x.due}"></div>
@@ -669,6 +677,7 @@ async function saveDebt(kind,id){if(!isAdmin())return toast('Akses hanya lihat �
   if(!party)return toast('Nama pihak wajib diisi');
   if(!amt||amt<=0)return toast('Jumlah harus lebih dari 0');
   const obj={party,desc:fDesc.value.trim(),amount:amt,due:fDue.value,status:fStat.value,kategori:fKategori.value};
+  if(kind==='hutang'){obj.pekerjaan=fPekerjaan.value.trim()}
   if(kind==='piutang'){obj.tanggal=fTanggal.value||today()}
   if(id){Object.assign(DB[kind].find(v=>v.id===id),obj)}else{DB[kind].push({id:uid(),...obj})}
   await saveDB();closeModal();render();toast('Data tersimpan');
