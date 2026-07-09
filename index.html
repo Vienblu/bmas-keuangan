@@ -570,8 +570,9 @@ function rHutang(){
       </tr>`;
       return headerRow+(expanded?g.items.map(x=>debtRow(x,true)).join(''):'');
     }).join('');
-    return `<div class="tbl-wrap"><table>
-    <thead><tr><th>Tanggal</th><th>Kepada</th><th>Pekerjaan</th><th>Keterangan</th><th>Jatuh Tempo</th><th>Status</th><th class="amt">Jumlah</th><th style="width:80px">Minggu Ini</th>${adm('<th style="width:120px"></th>')}</tr></thead>
+    return `<div class="tbl-wrap"><table style="table-layout:fixed;min-width:920px">
+    <colgroup><col style="width:9%"><col style="width:14%"><col style="width:12%"><col style="width:17%"><col style="width:10%"><col style="width:10%"><col style="width:11%"><col style="width:7%">${adm('<col style="width:10%">')}</colgroup>
+    <thead><tr><th>Tanggal</th><th>Kepada</th><th>Pekerjaan</th><th>Keterangan</th><th>Jatuh Tempo</th><th>Status</th><th class="amt">Jumlah</th><th>Minggu Ini</th>${adm('<th></th>')}</tr></thead>
     <tbody>${rows}</tbody></table></div>`;
   };
 
