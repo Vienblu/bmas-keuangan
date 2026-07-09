@@ -518,14 +518,19 @@ async function delCat(id){if(!isAdmin())return toast('Akses hanya lihat — tida
 /* ================= HUTANG / PIUTANG ================= */
 const KATEGORI_PIUTANG=['Filter','Project PT. Berkah Mandiri Abadi Sentosa','CV. Rizki Powerindo'];
 const DIVISI_HUTANG=['Project','Filter'];
+function hutangGroupId(party){return 'grp_'+encodeURIComponent(party||'-').replace(/[^a-zA-Z0-9]/g,'_')}
+async function toggleHutangGroup(gid){
+  if(!window._hutangExpand)window._hutangExpand={};
+  window._hutangExpand[gid]=!window._hutangExpand[gid];
+  render();
+}
 function rHutang(){
+  if(!window._hutangExpand)window._hutangExpand={};
   const list=DB.hutang;
   const total=sumDebt(list);
 
-  const table=(items)=>items.length?`<div class="tbl-wrap"><table>
-    <thead><tr><th>Kepada</th><th>Keterangan</th><th>Jatuh Tempo</th><th>Status</th><th class="amt">Jumlah</th>${adm('<th style="width:120px"></th>')}</tr></thead>
-    <tbody>${items.map(x=>`<tr style="${x.status==='lunas'?'opacity:.55':''}">
-      <td><b>${esc(x.party)}</b></td>
+  const debtRow=(x,nested)=>`<tr style="${x.status==='lunas'?'opacity:.55':''}${nested?';background:var(--paper)':''}">
+      <td ${nested?'style="padding-left:30px;color:var(--muted);font-size:13px"':''}>${nested?'↳':`<b>${esc(x.party)}</b>`}</td>
       <td>${esc(x.desc)||'-'}</td>
       <td style="white-space:nowrap">${fmtDate(x.due)}</td>
       <td><span class="chip ${x.status==='lunas'?'chip-green':'chip-amber'}">${x.status==='lunas'?'Lunas':'Belum Lunas'}</span></td>
@@ -534,8 +539,32 @@ function rHutang(){
         <button class="icon-btn" title="${x.status==='lunas'?'Tandai belum lunas':'Tandai lunas'}" onclick="toggleDebt('hutang','${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></button>
         <button class="icon-btn" onclick="mDebt('hutang','${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.8 2.8 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button>
         <button class="icon-btn" onclick="delDebt('hutang','${x.id}')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6"/></svg></button>
-      </td>`)}</tr>`).join('')}</tbody></table></div>`
-    :`<div class="empty"><b>Belum ada hutang</b>${isAdmin()?'Klik "+ Tambah Hutang" untuk mulai mencatat.':'Semua tercatat rapi di sini nanti.'}</div>`;
+      </td>`)}</tr>`;
+
+  const table=(items)=>{
+    if(!items.length)return `<div class="empty"><b>Belum ada hutang</b>${isAdmin()?'Klik "+ Tambah Hutang" untuk mulai mencatat.':'Semua tercatat rapi di sini nanti.'}</div>`;
+    const groups=[];const map={};
+    items.forEach(x=>{const key=x.party||'-';if(!map[key]){map[key]={party:key,items:[]};groups.push(map[key])}map[key].items.push(x)});
+    const rows=groups.map(g=>{
+      if(g.items.length===1)return debtRow(g.items[0],false);
+      const gid=hutangGroupId(g.party);
+      const expanded=!!window._hutangExpand[gid];
+      const belumCount=g.items.filter(x=>x.status!=='lunas').length;
+      const totalBelum=g.items.filter(x=>x.status!=='lunas').reduce((s,x)=>s+ +x.amount,0);
+      const totalAmt=g.items.reduce((s,x)=>s+ +x.amount,0);
+      const headerRow=`<tr style="cursor:pointer" onclick="toggleHutangGroup('${gid}')">
+        <td><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block;vertical-align:-1px;margin-right:5px;transition:transform .15s;transform:rotate(${expanded?90:0}deg)"><path d="M9 6l6 6-6 6"/></svg><b>${esc(g.party)}</b> <span style="color:var(--muted);font-weight:400;font-size:12px">(${g.items.length} invoice)</span></td>
+        <td colspan="2" style="color:var(--muted);font-size:12.5px">${belumCount>0?`${belumCount} belum lunas`:'Semua lunas'}</td>
+        <td><span class="chip ${belumCount>0?'chip-amber':'chip-green'}">${belumCount>0?'Belum Lunas':'Lunas'}</span></td>
+        <td class="amt mono"><b>${fmt(belumCount>0?totalBelum:totalAmt)}</b></td>
+        ${adm('<td class="amt"></td>')}
+      </tr>`;
+      return headerRow+(expanded?g.items.map(x=>debtRow(x,true)).join(''):'');
+    }).join('');
+    return `<div class="tbl-wrap"><table>
+    <thead><tr><th>Kepada</th><th>Keterangan</th><th>Jatuh Tempo</th><th>Status</th><th class="amt">Jumlah</th>${adm('<th style="width:120px"></th>')}</tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+  };
 
   const sectionCard=(kat)=>{
     const items=list.filter(x=>(x.kategori||'Project')===kat).sort((a,b)=>(a.status==='lunas')-(b.status==='lunas')||(a.due||'').localeCompare(b.due||''));
